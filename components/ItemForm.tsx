@@ -146,7 +146,7 @@ export default function ItemForm({ item }: { item?: Item }) {
             max={new Date().toISOString().slice(0, 7)}
             value={purchasedAt}
             onChange={(e) => setPurchasedAt(e.target.value)}
-            className={`${inputClass} text-sm`}
+            className={`${inputClass} block min-h-[42px] appearance-none bg-white text-left`}
           />
         </div>
       </div>
