@@ -48,6 +48,7 @@ Item
 - condition (string) [New | Like new | Good | Fair, optional]
 - brand (string) [optional]
 - purchased_at (string) [YYYY-MM, optional; shown as "6 months old"]
+- active (boolean) [default true; inactive items are hidden from public browse, seller pages and item detail (owner still sees them)]
 - whatsapp_clicks (integer) [count of WhatsApp button clicks]
 - created_at (timestamp)
 ```

@@ -26,6 +26,7 @@ export default function ItemForm({ item }: { item?: Item }) {
   const [condition, setCondition] = useState(item?.condition ?? "");
   const [brand, setBrand] = useState(item?.brand ?? "");
   const [purchasedAt, setPurchasedAt] = useState(item?.purchased_at ?? "");
+  const [active, setActive] = useState(item?.active ?? true);
   const [photos, setPhotos] = useState<Photo[]>(item?.images.map((url) => ({ url })) ?? []);
   const [status, setStatus] = useState<"idle" | "uploading" | "saving">("idle");
   const [error, setError] = useState("");
@@ -61,7 +62,7 @@ export default function ItemForm({ item }: { item?: Item }) {
       await send(item ? `/api/items/${item.id}` : "/api/items", {
         method: item ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, price: Number(price), images, condition, brand, purchased_at: purchasedAt }),
+        body: JSON.stringify({ title, description, price: Number(price), images, condition, brand, purchased_at: purchasedAt, active }),
       });
 
       router.push("/dashboard");
@@ -209,6 +210,21 @@ export default function ItemForm({ item }: { item?: Item }) {
         )}
         <p className="mt-1 text-xs text-slate-500">Up to {MAX_IMAGES} photos. JPEG, PNG, WebP or GIF up to 4MB each. First photo is the cover.</p>
       </div>
+
+      {item && (
+        <label className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-3">
+          <input
+            type="checkbox"
+            checked={active}
+            onChange={(e) => setActive(e.target.checked)}
+            className="mt-0.5 h-5 w-5 accent-slate-900"
+          />
+          <span>
+            <span className="block text-sm font-medium">Active</span>
+            <span className="block text-xs text-slate-500">Uncheck to hide this listing from buyers.</span>
+          </span>
+        </label>
+      )}
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 

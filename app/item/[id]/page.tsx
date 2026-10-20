@@ -12,7 +12,7 @@ type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = await getItem((await params).id);
-  if (!data) return {};
+  if (!data?.item.active) return {};
   const { item } = data;
   return {
     title: item.title,
@@ -27,6 +27,7 @@ export default async function ItemPage({ params }: Props) {
 
   const { item, seller } = data;
   const { userId } = await auth();
+  if (!item.active && userId !== item.user_id) notFound();
   const sellerName = seller?.name ?? "Seller";
 
   return (
@@ -34,6 +35,9 @@ export default async function ItemPage({ params }: Props) {
       <ImageGallery images={item.images} title={item.title} />
 
       <div className="space-y-6">
+        {!item.active && (
+          <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">This listing is inactive and hidden from buyers.</p>
+        )}
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">{item.title}</h1>
           <p className="text-2xl font-semibold">{formatPrice(item.price)}</p>

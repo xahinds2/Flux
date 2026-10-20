@@ -10,7 +10,7 @@ export const metadata = { title: "Dashboard" };
 
 export default async function Dashboard() {
   const { userId } = await auth.protect();
-  const [seller, items] = await Promise.all([getSeller(userId), getListings(userId)]);
+  const [seller, items] = await Promise.all([getSeller(userId), getListings(userId, true)]);
   if (!seller?.whatsapp_number) redirect("/profile");
 
   const totalClicks = items.reduce((sum, item) => sum + item.whatsapp_clicks, 0);
@@ -62,6 +62,9 @@ export default async function Dashboard() {
                     <Image src={item.images[0]} alt={item.title} fill sizes="(min-width: 1024px) 33vw, 50vw" className="object-cover" />
                   ) : (
                     <div className="flex h-full items-center justify-center text-sm text-slate-400">No photo</div>
+                  )}
+                  {!item.active && (
+                    <span className="absolute left-2 top-2 rounded bg-slate-900/80 px-2 py-0.5 text-xs font-medium text-white">Inactive</span>
                   )}
                 </div>
                 <div className="space-y-2 p-3">

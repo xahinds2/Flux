@@ -9,6 +9,7 @@ export type ItemInput = {
   condition: string;
   brand: string;
   purchased_at: string;
+  active: boolean;
 };
 
 type Result<T> = { ok: true; data: T } | { ok: false; error: string };
@@ -39,6 +40,7 @@ export function parseItemInput(input: unknown, userId: string): Result<ItemInput
   const condition = str(body.condition);
   const brand = str(body.brand);
   const purchased_at = str(body.purchased_at);
+  const active = body.active !== false;
 
   if (!title || title.length > 120) return { ok: false, error: "Title is required (max 120 characters)" };
   if (description.length > 2000) return { ok: false, error: "Description is too long (max 2000 characters)" };
@@ -55,7 +57,7 @@ export function parseItemInput(input: unknown, userId: string): Result<ItemInput
 
   return {
     ok: true,
-    data: { title, description, price: Math.round(price * 100) / 100, images, condition, brand, purchased_at },
+    data: { title, description, price: Math.round(price * 100) / 100, images, condition, brand, purchased_at, active },
   };
 }
 

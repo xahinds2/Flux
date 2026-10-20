@@ -20,6 +20,7 @@ type ItemDoc = {
   condition: string;
   brand: string;
   purchased_at: string;
+  active?: boolean;
   whatsapp_clicks: number;
   created_at: Date;
 };
@@ -36,6 +37,7 @@ export type Item = {
   condition: string;
   brand: string;
   purchased_at: string;
+  active: boolean;
   whatsapp_clicks: number;
   created_at: string;
 };
@@ -59,6 +61,7 @@ const itemSchema = new Schema<ItemDoc>({
   condition: { type: String, default: "" },
   brand: { type: String, default: "" },
   purchased_at: { type: String, default: "" },
+  active: { type: Boolean, default: true },
   whatsapp_clicks: { type: Number, default: 0 },
   created_at: { type: Date, default: Date.now, index: true },
 });
@@ -90,6 +93,7 @@ function toItem(doc: ItemDoc): Item {
     condition: doc.condition ?? "",
     brand: doc.brand ?? "",
     purchased_at: doc.purchased_at ?? "",
+    active: doc.active !== false,
     whatsapp_clicks: doc.whatsapp_clicks ?? 0,
     created_at: new Date(doc.created_at).toISOString(),
   };
@@ -99,9 +103,13 @@ function toSeller(doc: UserDoc): Seller {
   return { id: doc._id, name: doc.name || "Seller", whatsapp_number: (doc.whatsapp_number ?? "").replace(/\D/g, "") };
 }
 
-export async function getListings(sellerId?: string): Promise<Listing[]> {
+export async function getListings(sellerId?: string, includeInactive = false): Promise<Listing[]> {
   await connectDB();
-  const docs = await ItemModel.find(sellerId ? { user_id: sellerId } : {}).sort({ created_at: -1 }).lean<ItemDoc[]>();
+  const filter = {
+    ...(sellerId && { user_id: sellerId }),
+    ...(!includeInactive && { active: { $ne: false } }),
+  };
+  const docs = await ItemModel.find(filter).sort({ created_at: -1 }).lean<ItemDoc[]>();
   const users = await User.find({ _id: { $in: [...new Set(docs.map((d) => d.user_id))] } }).lean<UserDoc[]>();
   const sellers = new Map(users.map((u) => [u._id, toSeller(u)]));
   return docs.map((d) => {
