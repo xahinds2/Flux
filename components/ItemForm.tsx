@@ -121,8 +121,8 @@ export default function ItemForm({ item }: { item?: Item }) {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="min-w-0">
           <label htmlFor="condition" className="mb-1 block text-sm font-medium">
             Condition
           </label>
@@ -136,7 +136,7 @@ export default function ItemForm({ item }: { item?: Item }) {
           </select>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <label htmlFor="purchased_at" className="mb-1 block text-sm font-medium">
             Purchased
           </label>
@@ -146,7 +146,7 @@ export default function ItemForm({ item }: { item?: Item }) {
             max={new Date().toISOString().slice(0, 7)}
             value={purchasedAt}
             onChange={(e) => setPurchasedAt(e.target.value)}
-            className={inputClass}
+            className={`${inputClass} text-sm`}
           />
         </div>
       </div>
