@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import SortSelect from "@/components/SortSelect";
+import { parseSort, sortItems } from "@/lib/sort";
 import ItemList from "@/components/ItemList";
 import { getListings, getSeller } from "@/lib/db";
 
-type Props = { params: Promise<{ user_id: string }> };
+type Props = { params: Promise<{ user_id: string }>; searchParams: Promise<{ sort?: string | string[] }> };
 
 export const dynamic = "force-dynamic";
 
@@ -12,8 +14,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return seller ? { title: `Items from ${seller.name}` } : {};
 }
 
-export default async function SellerPage({ params }: Props) {
+export default async function SellerPage({ params, searchParams }: Props) {
   const { user_id } = await params;
+  const sort = parseSort((await searchParams).sort);
   const [seller, items] = await Promise.all([getSeller(user_id), getListings(user_id)]);
   if (!seller) notFound();
 
@@ -25,7 +28,8 @@ export default async function SellerPage({ params }: Props) {
           {items.length} {items.length === 1 ? "listing" : "listings"}
         </p>
       </div>
-      <ItemList items={items} empty="This seller has no listings right now." />
+      <div className="flex justify-end"><SortSelect value={sort} /></div>
+      <ItemList items={sortItems(items, sort)} empty="This seller has no listings right now." />
     </div>
   );
 }

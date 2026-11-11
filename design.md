@@ -20,7 +20,10 @@ Multi-vendor listing app. Anyone can sign up as a seller, configure their WhatsA
    - Set WhatsApp number in profile/settings
    - Add item: title, description, price, up to 5 photos, condition, brand, purchase month
    - View your listings
+   - Enabled listings appear before disabled listings, including after a status change refresh
+   - Sort within each status group by newest, oldest, or price (low to high / high to low); selection persists in the URL
    - Delete your items
+   - Disable or enable listings directly from the dashboard without deleting details or photos
    - Edit item details
 
 2. **Public Buyer Browse** (No auth)
@@ -28,6 +31,7 @@ Multi-vendor listing app. Anyone can sign up as a seller, configure their WhatsA
    - Click item → detail page with seller name + WhatsApp
    - "Message Seller on WhatsApp" button (pre-filled with item details)
    - Link to seller's other items
+   - Sort browse and seller listings by newest, oldest, or price (low to high / high to low)
 
 ## Data Model
 ```
@@ -70,6 +74,7 @@ Item
 - `GET /item/[id]/edit` — edit your listing
 - `POST /api/items` — create item
 - `PUT /api/items/[id]` — update your item
+- `PATCH /api/items/[id]` — enable or disable your item with `{ active: boolean }`
 - `POST /api/upload` — upload item photo to Vercel Blob (JPEG/PNG/WebP/GIF, max 4MB)
 - `DELETE /api/items/[id]` — delete your item
 - `PUT /api/profile` — update WhatsApp, name

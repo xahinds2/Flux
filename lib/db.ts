@@ -158,6 +158,17 @@ export async function deleteItem(id: string, userId: string) {
   return doc ? toItem(doc) : null;
 }
 
+export async function setItemActive(id: string, userId: string, active: boolean) {
+  if (!isObjectId(id)) return null;
+  await connectDB();
+  const doc = await ItemModel.findOneAndUpdate(
+    { _id: id, user_id: userId },
+    { $set: { active } },
+    { new: true },
+  ).lean<ItemDoc>();
+  return doc ? toItem(doc) : null;
+}
+
 export async function incrementClick(id: string) {
   if (!isObjectId(id)) return false;
   await connectDB();

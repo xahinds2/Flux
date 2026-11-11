@@ -2,17 +2,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
+import SortSelect from "@/components/SortSelect";
+import { parseSort, sortItems } from "@/lib/sort";
 import DeleteButton from "@/components/DeleteButton";
+import ItemStatusButton from "@/components/ItemStatusButton";
 import { getListings, getSeller } from "@/lib/db";
 import { formatPrice } from "@/lib/format";
 
 export const metadata = { title: "Dashboard" };
 
-export default async function Dashboard() {
+export default async function Dashboard({ searchParams }: { searchParams: Promise<{ sort?: string | string[] }> }) {
+  const sort = parseSort((await searchParams).sort);
   const { userId } = await auth.protect();
   const [seller, items] = await Promise.all([getSeller(userId), getListings(userId, true)]);
   if (!seller?.whatsapp_number) redirect("/profile");
 
+  const sortedItems = sortItems(items, sort).sort((a, b) => Number(b.active) - Number(a.active));
   const totalClicks = items.reduce((sum, item) => sum + item.whatsapp_clicks, 0);
 
   return (
@@ -44,7 +49,10 @@ export default async function Dashboard() {
       </div>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Your listings</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-xl font-semibold">Your listings</h2>
+          <SortSelect value={sort} />
+        </div>
 
         {items.length === 0 ? (
           <p className="rounded-xl border border-dashed border-slate-300 py-16 text-center text-slate-500">
@@ -55,7 +63,7 @@ export default async function Dashboard() {
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((item) => (
+            {sortedItems.map((item) => (
               <div key={item.id} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
                 <div className="relative aspect-video bg-slate-100">
                   {item.images[0] ? (
@@ -90,6 +98,7 @@ export default async function Dashboard() {
                     </Link>
                     <DeleteButton itemId={item.id} />
                   </div>
+                  <ItemStatusButton itemId={item.id} active={item.active} />
                 </div>
               </div>
             ))}
