@@ -34,7 +34,7 @@ Multi-vendor listing app. Anyone can sign up as a seller, configure their WhatsA
    - "Message Seller on WhatsApp" button (pre-filled with item details)
    - Share icon on listing cards and detail pages opens the device share sheet, or copies the listing link when unavailable
    - Link to seller's other items
-   - Sort browse and seller listings by newest, oldest, or price (low to high / high to low); default is price high to low
+   - Sort browse and seller listings by newest, oldest, or price (low to high / high to low); default is price high to low. Sold items appear last, with the selected sort preserved within each group.
 
 ## Data Model
 ```

@@ -37,6 +37,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <SignInButton mode="modal" forceRedirectUrl="/new">
                     <button className="rounded-lg bg-slate-900 px-3 py-1.5 text-white hover:bg-slate-800">Sell</button>
                   </SignInButton>
+                  <SignInButton mode="modal">
+                    <button
+                      type="button"
+                      aria-label="Sign in"
+                      title="Sign in"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]" aria-hidden="true">
+                        <circle cx="12" cy="7.5" r="3.5" />
+                        <path d="M5 20v-1a7 7 0 0 1 14 0v1" />
+                      </svg>
+                    </button>
+                  </SignInButton>
                 </SignedOut>
               </nav>
             </div>

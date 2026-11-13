@@ -8,7 +8,7 @@ export default function ItemList({ items, empty }: { items: Listing[]; empty: st
 
   return (
     <div className="grid gap-3 lg:grid-cols-2">
-      {items.map((item) => (
+      {[...items].sort((a, b) => Number(a.sold) - Number(b.sold)).map((item) => (
         <ItemCard key={item.id} item={item} />
       ))}
     </div>
