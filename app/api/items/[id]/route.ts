@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { del } from "@vercel/blob";
-import { deleteItem, setItemActive, updateItem } from "@/lib/db";
+import { deleteItem, setItemStatus, updateItem } from "@/lib/db";
 import { parseItemInput } from "@/lib/validate";
 
 type Params = { params: Promise<{ id: string }> };
@@ -11,11 +11,14 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json().catch(() => null);
-  if (typeof body?.active !== "boolean") {
-    return NextResponse.json({ error: "Active must be a boolean" }, { status: 400 });
+  if (!(body?.sold === true && body?.active === undefined) && !(typeof body?.active === "boolean" && body?.sold === undefined)) {
+    return NextResponse.json({ error: "Provide active as a boolean or sold as true" }, { status: 400 });
   }
 
-  const item = await setItemActive((await params).id, userId, body.active);
+  const item = await setItemStatus((await params).id, userId, {
+    active: body.sold === true ? false : body.active,
+    sold: body.sold === true,
+  });
   if (!item) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   return NextResponse.json(item);

@@ -10,7 +10,7 @@ export const SORT_OPTIONS = [
 export type SortOrder = (typeof SORT_OPTIONS)[number]["value"];
 
 export function parseSort(value: string | string[] | undefined): SortOrder {
-  return SORT_OPTIONS.find((option) => option.value === value)?.value ?? "newest";
+  return SORT_OPTIONS.find((option) => option.value === value)?.value ?? "price-high";
 }
 
 export function sortItems<T extends Item>(items: T[], sort: SortOrder): T[] {

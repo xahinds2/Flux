@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import ImageGallery from "@/components/ImageGallery";
+import ShareButton from "@/components/ShareButton";
+import ItemDescription from "@/components/ItemDescription";
 import ItemMeta from "@/components/ItemMeta";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { getItem } from "@/lib/db";
@@ -12,7 +14,7 @@ type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = await getItem((await params).id);
-  if (!data?.item.active) return {};
+  if (!data || (!data.item.active && !data.item.sold)) return {};
   const { item } = data;
   return {
     title: item.title,
@@ -27,7 +29,7 @@ export default async function ItemPage({ params }: Props) {
 
   const { item, seller } = data;
   const { userId } = await auth();
-  if (!item.active && userId !== item.user_id) notFound();
+  if (!item.active && !item.sold && userId !== item.user_id) notFound();
   const sellerName = seller?.name ?? "Seller";
 
   return (
@@ -36,10 +38,13 @@ export default async function ItemPage({ params }: Props) {
 
       <div className="space-y-6">
         {!item.active && (
-          <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">This listing is inactive and hidden from buyers.</p>
+          <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">{item.sold ? "This item has been sold." : "This listing is inactive and hidden from buyers."}</p>
         )}
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">{item.title}</h1>
+          <div className="flex items-start justify-between gap-3">
+            <h1 className="min-w-0 text-3xl font-bold tracking-tight">{item.title}</h1>
+            <ShareButton itemId={item.id} title={item.title} />
+          </div>
           <p className="text-2xl font-semibold">{formatPrice(item.price)}</p>
           <Link href={`/seller/${item.user_id}`} className="text-sm text-slate-600 hover:text-slate-900">
             Sold by {sellerName}
@@ -48,7 +53,7 @@ export default async function ItemPage({ params }: Props) {
 
         <ItemMeta item={item} />
 
-        {item.description && <p className="whitespace-pre-wrap text-slate-700">{item.description}</p>}
+        {item.description && <ItemDescription text={item.description} />}
 
         {userId === item.user_id ? (
           <Link
@@ -57,6 +62,8 @@ export default async function ItemPage({ params }: Props) {
           >
             Edit listing
           </Link>
+        ) : item.sold ? (
+          <p className="rounded-lg bg-slate-100 px-4 py-3 text-center font-semibold text-slate-500">Sold — no longer available</p>
         ) : seller?.whatsapp_number ? (
           <WhatsAppButton
             itemId={item.id}

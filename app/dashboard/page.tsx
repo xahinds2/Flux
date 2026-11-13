@@ -72,7 +72,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
                     <div className="flex h-full items-center justify-center text-sm text-slate-400">No photo</div>
                   )}
                   {!item.active && (
-                    <span className="absolute left-2 top-2 rounded bg-slate-900/80 px-2 py-0.5 text-xs font-medium text-white">Inactive</span>
+                    <span className="absolute left-2 top-2 rounded bg-slate-900/80 px-2 py-0.5 text-xs font-medium text-white">{item.sold ? "Sold" : "Inactive"}</span>
                   )}
                 </div>
                 <div className="space-y-2 p-3">
@@ -98,7 +98,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
                     </Link>
                     <DeleteButton itemId={item.id} />
                   </div>
-                  <ItemStatusButton itemId={item.id} active={item.active} />
+                  <ItemStatusButton itemId={item.id} active={item.active} sold={item.sold} />
                 </div>
               </div>
             ))}

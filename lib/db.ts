@@ -21,6 +21,7 @@ type ItemDoc = {
   brand: string;
   purchased_at: string;
   active?: boolean;
+  sold?: boolean;
   whatsapp_clicks: number;
   created_at: Date;
 };
@@ -38,6 +39,7 @@ export type Item = {
   brand: string;
   purchased_at: string;
   active: boolean;
+  sold: boolean;
   whatsapp_clicks: number;
   created_at: string;
 };
@@ -62,6 +64,7 @@ const itemSchema = new Schema<ItemDoc>({
   brand: { type: String, default: "" },
   purchased_at: { type: String, default: "" },
   active: { type: Boolean, default: true },
+  sold: { type: Boolean, default: false },
   whatsapp_clicks: { type: Number, default: 0 },
   created_at: { type: Date, default: Date.now, index: true },
 });
@@ -94,6 +97,7 @@ function toItem(doc: ItemDoc): Item {
     brand: doc.brand ?? "",
     purchased_at: doc.purchased_at ?? "",
     active: doc.active !== false,
+    sold: doc.sold === true,
     whatsapp_clicks: doc.whatsapp_clicks ?? 0,
     created_at: new Date(doc.created_at).toISOString(),
   };
@@ -107,7 +111,7 @@ export async function getListings(sellerId?: string, includeInactive = false): P
   await connectDB();
   const filter = {
     ...(sellerId && { user_id: sellerId }),
-    ...(!includeInactive && { active: { $ne: false } }),
+    ...(!includeInactive && { $or: [{ active: { $ne: false } }, { sold: true }] }),
   };
   const docs = await ItemModel.find(filter).sort({ created_at: -1 }).lean<ItemDoc[]>();
   const users = await User.find({ _id: { $in: [...new Set(docs.map((d) => d.user_id))] } }).lean<UserDoc[]>();
@@ -158,12 +162,12 @@ export async function deleteItem(id: string, userId: string) {
   return doc ? toItem(doc) : null;
 }
 
-export async function setItemActive(id: string, userId: string, active: boolean) {
+export async function setItemStatus(id: string, userId: string, status: { active: boolean; sold: boolean }) {
   if (!isObjectId(id)) return null;
   await connectDB();
   const doc = await ItemModel.findOneAndUpdate(
     { _id: id, user_id: userId },
-    { $set: { active } },
+    { $set: status },
     { new: true },
   ).lean<ItemDoc>();
   return doc ? toItem(doc) : null;

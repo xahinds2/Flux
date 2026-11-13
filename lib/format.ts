@@ -4,7 +4,7 @@ const rupeesWithPaise = new Intl.NumberFormat("en-IN", { style: "currency", curr
 export const formatPrice = (price: number) => (Number.isInteger(price) ? rupees : rupeesWithPaise).format(price);
 
 export function whatsappLink(number: string, title: string, price: number) {
-  const text = `Hey, interested in ${title} for ${formatPrice(price)}`;
+  const text = `Hey, I'm interested in ${title}. Is it available at ${formatPrice(price)}?`;
   return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
 }
 

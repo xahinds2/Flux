@@ -21,17 +21,20 @@ Multi-vendor listing app. Anyone can sign up as a seller, configure their WhatsA
    - Add item: title, description, price, up to 5 photos, condition, brand, purchase month
    - View your listings
    - Enabled listings appear before disabled listings, including after a status change refresh
-   - Sort within each status group by newest, oldest, or price (low to high / high to low); selection persists in the URL
+   - Sort within each status group by newest, oldest, or price (low to high / high to low); default is price high to low; selection persists in the URL
    - Delete your items
    - Disable or enable listings directly from the dashboard without deleting details or photos
+   - Mark listings sold beside the disable button; sold listings remain visible publicly with muted styling, a Sold badge, and no enquiry button. “Mark available” clears the sold status and enables the listing again.
    - Edit item details
 
 2. **Public Buyer Browse** (No auth)
    - List of all items from all sellers: image left; title, description, condition/age/brand tags, price, WhatsApp icon right
+   - Description lines starting with *, -, or • render as bullet lists in cards and item details
    - Click item → detail page with seller name + WhatsApp
    - "Message Seller on WhatsApp" button (pre-filled with item details)
+   - Share icon on listing cards and detail pages opens the device share sheet, or copies the listing link when unavailable
    - Link to seller's other items
-   - Sort browse and seller listings by newest, oldest, or price (low to high / high to low)
+   - Sort browse and seller listings by newest, oldest, or price (low to high / high to low); default is price high to low
 
 ## Data Model
 ```
@@ -52,7 +55,8 @@ Item
 - condition (string) [New | Like new | Good | Fair, optional]
 - brand (string) [optional]
 - purchased_at (string) [YYYY-MM, optional; shown as "6 months old"]
-- active (boolean) [default true; inactive items are hidden from public browse, seller pages and item detail (owner still sees them)]
+- active (boolean) [default true; disabled, unsold items are hidden from public browse, seller pages and item detail (owner still sees them); sold items remain visible]
+- sold (boolean) [default false; marking sold also sets active to false]
 - whatsapp_clicks (integer) [count of WhatsApp button clicks]
 - created_at (timestamp)
 ```
@@ -74,7 +78,7 @@ Item
 - `GET /item/[id]/edit` — edit your listing
 - `POST /api/items` — create item
 - `PUT /api/items/[id]` — update your item
-- `PATCH /api/items/[id]` — enable or disable your item with `{ active: boolean }`
+- `PATCH /api/items/[id]` — enable or disable your item with `{ active: boolean }`, or mark it sold with `{ sold: true }`
 - `POST /api/upload` — upload item photo to Vercel Blob (JPEG/PNG/WebP/GIF, max 4MB)
 - `DELETE /api/items/[id]` — delete your item
 - `PUT /api/profile` — update WhatsApp, name
@@ -101,7 +105,7 @@ Item
 2. Click item → see: title, description, price, photo gallery, seller name
 3. Click "Message [Seller Name] on WhatsApp" → opens WhatsApp with pre-filled:
    ```
-   Hey, interested in [Item Title] for ₹[Price]
+   Hey, I'm interested in [Item Title]. Is it available at ₹[Price]?
    ```
 4. Conversation happens on WhatsApp (seller replies directly)
 5. Can click "View more from [Seller]" → see their other items
