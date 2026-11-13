@@ -67,7 +67,7 @@ export default async function ItemPage({ params }: Props) {
         ) : seller?.whatsapp_number ? (
           <WhatsAppButton
             itemId={item.id}
-            href={whatsappLink(seller.whatsapp_number, item.title, item.price)}
+            href={whatsappLink(seller.whatsapp_number, item.title, item.price, item.id)}
             label={`Message ${sellerName} on WhatsApp`}
           />
         ) : (

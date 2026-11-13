@@ -45,7 +45,7 @@ export default function ItemCard({ item }: { item: Listing }) {
             <div className="relative z-10 min-w-0">
               <WhatsAppButton
                 itemId={item.id}
-                href={whatsappLink(item.seller_whatsapp, item.title, item.price)}
+                href={whatsappLink(item.seller_whatsapp, item.title, item.price, item.id)}
                 label={item.seller_name}
                 compact
               />

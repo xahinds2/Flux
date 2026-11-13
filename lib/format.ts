@@ -3,8 +3,10 @@ const rupeesWithPaise = new Intl.NumberFormat("en-IN", { style: "currency", curr
 
 export const formatPrice = (price: number) => (Number.isInteger(price) ? rupees : rupeesWithPaise).format(price);
 
-export function whatsappLink(number: string, title: string, price: number) {
-  const text = `Hey, I'm interested in ${title}. Is it available at ${formatPrice(price)}?`;
+export const productLink = (itemId: string) => `https://flux-pune.vercel.app/item/${encodeURIComponent(itemId)}`;
+
+export function whatsappLink(number: string, title: string, price: number, itemId: string) {
+  const text = `Hey, I'm interested in ${title}. Is it available at ${formatPrice(price)}?\n${productLink(itemId)}`;
   return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
 }
 

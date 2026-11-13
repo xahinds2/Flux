@@ -1,23 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 type Props = { itemId: string; href: string; label: string; compact?: boolean };
 
 export default function WhatsAppButton({ itemId, href, label, compact }: Props) {
-  const [messageHref, setMessageHref] = useState(href);
-
-  useEffect(() => {
-    const link = new URL(href);
-    const productUrl = new URL(`/item/${itemId}`, window.location.origin).href;
-    link.searchParams.set("text", `${link.searchParams.get("text")}
-${productUrl}`);
-    setMessageHref(link.href);
-  }, [href, itemId]);
-
   return (
     <a
-      href={messageHref}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => navigator.sendBeacon(`/api/items/${itemId}/click`)}

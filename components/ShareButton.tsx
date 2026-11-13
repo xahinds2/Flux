@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { productLink } from "@/lib/format";
 
 export default function ShareButton({ itemId, title, compact = false }: { itemId: string; title: string; compact?: boolean }) {
   const [message, setMessage] = useState("");
 
   const share = async () => {
     setMessage("");
-    const url = new URL(`/item/${itemId}`, window.location.origin).href;
+    const url = productLink(itemId);
     try {
       if (navigator.share) {
         await navigator.share({ title, url });
