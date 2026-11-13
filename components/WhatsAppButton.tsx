@@ -1,17 +1,29 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 type Props = { itemId: string; href: string; label: string; compact?: boolean };
 
 export default function WhatsAppButton({ itemId, href, label, compact }: Props) {
+  const [messageHref, setMessageHref] = useState(href);
+
+  useEffect(() => {
+    const link = new URL(href);
+    const productUrl = new URL(`/item/${itemId}`, window.location.origin).href;
+    link.searchParams.set("text", `${link.searchParams.get("text")}
+${productUrl}`);
+    setMessageHref(link.href);
+  }, [href, itemId]);
+
   return (
     <a
-      href={href}
+      href={messageHref}
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => navigator.sendBeacon(`/api/items/${itemId}/click`)}
       className={
         compact
-          ? "inline-flex max-w-full items-center gap-2 rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-green-700"
+          ? "inline-flex min-h-8 max-w-full items-center gap-2 rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-green-700"
           : "block w-full rounded-lg bg-green-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-green-700"
       }
     >

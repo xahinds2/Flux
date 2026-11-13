@@ -106,6 +106,7 @@ Item
 3. Click "Message [Seller Name] on WhatsApp" → opens WhatsApp with pre-filled:
    ```
    Hey, I'm interested in [Item Title]. Is it available at ₹[Price]?
+   https://[site]/item/[id]
    ```
 4. Conversation happens on WhatsApp (seller replies directly)
 5. Can click "View more from [Seller]" → see their other items

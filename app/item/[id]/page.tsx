@@ -36,13 +36,13 @@ export default async function ItemPage({ params }: Props) {
     <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-2">
       <ImageGallery images={item.images} title={item.title} />
 
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         {!item.active && (
           <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">{item.sold ? "This item has been sold." : "This listing is inactive and hidden from buyers."}</p>
         )}
         <div className="space-y-2">
-          <div className="flex items-start justify-between gap-3">
-            <h1 className="min-w-0 text-3xl font-bold tracking-tight">{item.title}</h1>
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="min-w-0 break-words text-3xl font-bold tracking-tight">{item.title}</h1>
             <ShareButton itemId={item.id} title={item.title} />
           </div>
           <p className="text-2xl font-semibold">{formatPrice(item.price)}</p>

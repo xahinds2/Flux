@@ -14,11 +14,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <html lang="en">
         <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
           <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
-            <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+            <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
               <Link href="/" className="text-xl font-bold tracking-tight">
                 Flux
               </Link>
-              <nav className="flex items-center gap-4 text-sm">
+              <nav className="flex flex-wrap items-center gap-3 text-sm sm:gap-4">
                 <Link href="/" className="text-slate-600 hover:text-slate-900">
                   Browse
                 </Link>

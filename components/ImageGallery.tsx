@@ -19,7 +19,7 @@ export default function ImageGallery({ images, title }: { images: string[]; titl
   }, [preview]);
 
   return (
-    <div className="space-y-3">
+    <div className="min-w-0 space-y-3">
       <div className="relative aspect-square overflow-hidden rounded-xl bg-slate-100">
         {images[active] ? (
           <button type="button" onClick={() => setPreview(true)} aria-label="View full photo" className="absolute inset-0 cursor-zoom-in">
@@ -31,14 +31,14 @@ export default function ImageGallery({ images, title }: { images: string[]; titl
       </div>
 
       {images.length > 1 && (
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {images.map((url, i) => (
             <button
               key={url}
               type="button"
               onClick={() => setActive(i)}
               aria-label={`Show photo ${i + 1}`}
-              className={`relative aspect-square w-16 overflow-hidden rounded-lg bg-slate-100 ring-2 ${i === active ? "ring-slate-900" : "ring-transparent hover:ring-slate-300"}`}
+              className={`relative aspect-square w-16 shrink-0 overflow-hidden rounded-lg bg-slate-100 ring-2 ${i === active ? "ring-slate-900" : "ring-transparent hover:ring-slate-300"}`}
             >
               <Image src={url} alt="" fill sizes="64px" className="object-cover" />
             </button>
