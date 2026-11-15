@@ -28,6 +28,8 @@ Multi-vendor listing app. Anyone can sign up as a seller, configure their WhatsA
    - Edit item details
 
 2. **Public Buyer Browse** (No auth)
+   - Homepage adapts NearbyStores’ warm neutral/green landing design with a split hero with a five-second slideshow of available listings with photos; previous/next and play/pause controls, pause on hover/focus, and reduced-motion support, photo-led store cards, and the existing item catalogue; no cross-project runtime dependencies
+   - Homepage showcases sellers with personal addresses and available items; store cards link to their pages and show available item counts
    - List of all items from all sellers: image left; title, description, condition/age/brand tags, price, WhatsApp icon right
    - Description lines starting with *, -, or • render as bullet lists in cards and item details
    - Click item → detail page with seller name + WhatsApp

@@ -47,7 +47,7 @@ export type Item = {
   created_at: string;
 };
 
-export type Listing = Item & { seller_name: string; seller_phone: string; seller_whatsapp: string };
+export type Listing = Item & { seller_name: string; seller_handle: string; seller_phone: string; seller_whatsapp: string };
 
 const userSchema = new Schema<UserDoc>({
   _id: { type: String, required: true },
@@ -124,7 +124,7 @@ export async function getListings(sellerId?: string, includeInactive = false): P
   const sellers = new Map(users.map((u) => [u._id, toSeller(u)]));
   return docs.map((d) => {
     const seller = sellers.get(d.user_id);
-    return { ...toItem(d), seller_name: seller?.name ?? "Seller", seller_phone: seller?.phone_number ?? "", seller_whatsapp: seller?.whatsapp_username || seller?.whatsapp_number || "" };
+    return { ...toItem(d), seller_name: seller?.name ?? "Seller", seller_handle: seller?.handle ?? "", seller_phone: seller?.phone_number ?? "", seller_whatsapp: seller?.whatsapp_username || seller?.whatsapp_number || "" };
   });
 }
 
