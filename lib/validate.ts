@@ -61,16 +61,25 @@ export function parseItemInput(input: unknown, userId: string): Result<ItemInput
   };
 }
 
-export function parseProfileInput(input: unknown): Result<{ name: string; whatsapp_number: string }> {
+export function parseProfileInput(input: unknown): Result<{ name: string; phone_number: string; whatsapp_number: string; whatsapp_username: string }> {
   const body = obj(input);
   const name = str(body.name);
+  const phoneDigits = str(body.phone_number).replace(/\D/g, "").replace(/^0+/, "");
+  const phone_number = phoneDigits.length === 10 ? `91${phoneDigits}` : phoneDigits;
+  const whatsapp_username = str(body.whatsapp_username).replace(/^@/, "");
   const digits = str(body.whatsapp_number).replace(/\D/g, "").replace(/^0+/, "");
   const whatsapp_number = digits.length === 10 ? `91${digits}` : digits;
 
   if (!name || name.length > 60) return { ok: false, error: "Name is required (max 60 characters)" };
-  if (whatsapp_number.length < 8 || whatsapp_number.length > 15) {
+  if (whatsapp_username && !/^(?=.*[a-zA-Z])[a-zA-Z0-9._]{3,35}$/.test(whatsapp_username)) {
+    return { ok: false, error: "Enter a valid WhatsApp username (3–35 letters, numbers, periods or underscores)" };
+  }
+  if (phone_number && (phone_number.length < 8 || phone_number.length > 15)) {
+    return { ok: false, error: "Enter a valid call number with country code" };
+  }
+  if ((!whatsapp_username || whatsapp_number) && (whatsapp_number.length < 8 || whatsapp_number.length > 15)) {
     return { ok: false, error: "Enter your WhatsApp number with country code, e.g. +91 98765 43210" };
   }
 
-  return { ok: true, data: { name, whatsapp_number } };
+  return { ok: true, data: { name, phone_number, whatsapp_number, whatsapp_username } };
 }

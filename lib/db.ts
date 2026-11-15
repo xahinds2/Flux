@@ -6,7 +6,9 @@ type UserDoc = {
   _id: string;
   email?: string;
   name: string;
+  phone_number: string;
   whatsapp_number: string;
+  whatsapp_username: string;
   created_at: Date;
 };
 
@@ -26,7 +28,7 @@ type ItemDoc = {
   created_at: Date;
 };
 
-export type Seller = { id: string; name: string; whatsapp_number: string };
+export type Seller = { id: string; name: string; phone_number: string; whatsapp_number: string; whatsapp_username: string };
 
 export type Item = {
   id: string;
@@ -44,13 +46,15 @@ export type Item = {
   created_at: string;
 };
 
-export type Listing = Item & { seller_name: string; seller_whatsapp: string };
+export type Listing = Item & { seller_name: string; seller_phone: string; seller_whatsapp: string };
 
 const userSchema = new Schema<UserDoc>({
   _id: { type: String, required: true },
   email: String,
   name: { type: String, default: "" },
+  phone_number: { type: String, default: "" },
   whatsapp_number: { type: String, default: "" },
+  whatsapp_username: { type: String, default: "" },
   created_at: { type: Date, default: Date.now },
 });
 
@@ -104,7 +108,7 @@ function toItem(doc: ItemDoc): Item {
 }
 
 function toSeller(doc: UserDoc): Seller {
-  return { id: doc._id, name: doc.name || "Seller", whatsapp_number: (doc.whatsapp_number ?? "").replace(/\D/g, "") };
+  return { id: doc._id, name: doc.name || "Seller", phone_number: (doc.phone_number ?? "").replace(/\D/g, ""), whatsapp_username: doc.whatsapp_username ?? "", whatsapp_number: (doc.whatsapp_number ?? "").replace(/\D/g, "") };
 }
 
 export async function getListings(sellerId?: string, includeInactive = false): Promise<Listing[]> {
@@ -118,7 +122,7 @@ export async function getListings(sellerId?: string, includeInactive = false): P
   const sellers = new Map(users.map((u) => [u._id, toSeller(u)]));
   return docs.map((d) => {
     const seller = sellers.get(d.user_id);
-    return { ...toItem(d), seller_name: seller?.name ?? "Seller", seller_whatsapp: seller?.whatsapp_number ?? "" };
+    return { ...toItem(d), seller_name: seller?.name ?? "Seller", seller_phone: seller?.phone_number ?? "", seller_whatsapp: seller?.whatsapp_username || seller?.whatsapp_number || "" };
   });
 }
 
@@ -136,7 +140,7 @@ export async function getSeller(userId: string): Promise<Seller | null> {
   return doc ? toSeller(doc) : null;
 }
 
-export async function upsertSeller(userId: string, data: { name: string; whatsapp_number: string; email?: string }) {
+export async function upsertSeller(userId: string, data: { name: string; phone_number: string; whatsapp_number: string; whatsapp_username: string; email?: string }) {
   await connectDB();
   const doc = await User.findByIdAndUpdate(userId, { $set: data }, { upsert: true, new: true }).lean<UserDoc>();
   return toSeller(doc!);

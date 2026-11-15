@@ -1,3 +1,4 @@
+import CallButton from "@/components/CallButton";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -42,7 +43,10 @@ export default async function ItemPage({ params }: Props) {
         )}
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              {item.brand && <p className="mb-0.5 text-xs leading-4 text-slate-500">{item.brand}</p>}
             <h1 className="min-w-0 break-words text-3xl font-bold tracking-tight">{item.title}</h1>
+            </div>
             <ShareButton itemId={item.id} title={item.title} />
           </div>
           <p className="text-2xl font-semibold">{formatPrice(item.price)}</p>
@@ -55,21 +59,27 @@ export default async function ItemPage({ params }: Props) {
 
         {item.description && <ItemDescription text={item.description} />}
 
-        {userId === item.user_id ? (
+        {userId === item.user_id && (
           <Link
             href={`/item/${item.id}/edit`}
             className="block w-full rounded-lg border border-slate-300 px-4 py-3 text-center font-semibold hover:bg-slate-100"
           >
             Edit listing
           </Link>
-        ) : item.sold ? (
+        )}
+
+        {item.sold ? (
           <p className="rounded-lg bg-slate-100 px-4 py-3 text-center font-semibold text-slate-500">Sold — no longer available</p>
-        ) : seller?.whatsapp_number ? (
-          <WhatsAppButton
+        ) : seller && (seller.whatsapp_username || seller.whatsapp_number || seller.phone_number) ? (
+          <div className="flex items-center gap-2">
+          {seller.phone_number && <CallButton number={seller.phone_number} name={sellerName} compact />}
+          {(seller.whatsapp_username || seller.whatsapp_number) && <WhatsAppButton
             itemId={item.id}
-            href={whatsappLink(seller.whatsapp_number, item.title, item.price, item.id)}
-            label={`Message ${sellerName} on WhatsApp`}
-          />
+            href={whatsappLink(seller.whatsapp_username || seller.whatsapp_number, item.title, item.price)}
+            label={sellerName}
+            compact
+          />}
+          </div>
         ) : (
           <p className="text-sm text-slate-500">This seller hasn&apos;t set up WhatsApp yet.</p>
         )}

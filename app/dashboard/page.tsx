@@ -15,7 +15,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const sort = parseSort((await searchParams).sort);
   const { userId } = await auth.protect();
   const [seller, items] = await Promise.all([getSeller(userId), getListings(userId, true)]);
-  if (!seller?.whatsapp_number) redirect("/profile");
+  if (!seller?.whatsapp_number && !seller?.whatsapp_username) redirect("/profile");
 
   const sortedItems = sortItems(items, sort).sort((a, b) => Number(b.active) - Number(a.active));
   const totalClicks = items.reduce((sum, item) => sum + item.whatsapp_clicks, 0);
@@ -33,7 +33,8 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         <div className="rounded-xl border border-slate-200 bg-white p-4">
           <p className="text-sm text-slate-500">Profile</p>
           <p className="font-semibold">{seller.name}</p>
-          <p className="text-sm text-slate-600">+{seller.whatsapp_number}</p>
+          {seller.phone_number && <p className="text-sm text-slate-600">Call: +{seller.phone_number}</p>}
+          <p className="text-sm text-slate-600">WhatsApp: {seller.whatsapp_username ? `@${seller.whatsapp_username}` : `+${seller.whatsapp_number}`}</p>
           <Link href="/profile" className="mt-2 inline-block text-sm text-slate-900 underline-offset-4 hover:underline">
             Edit profile
           </Link>

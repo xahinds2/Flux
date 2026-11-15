@@ -13,8 +13,8 @@ export async function POST(req: NextRequest) {
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const seller = await getSeller(userId);
-  if (!seller?.whatsapp_number) {
-    return NextResponse.json({ error: "Set your WhatsApp number in your profile first" }, { status: 400 });
+  if (!seller?.whatsapp_number && !seller?.whatsapp_username) {
+    return NextResponse.json({ error: "Set your WhatsApp number or username in your profile first" }, { status: 400 });
   }
 
   const parsed = parseItemInput(await req.json().catch(() => ({})), userId);

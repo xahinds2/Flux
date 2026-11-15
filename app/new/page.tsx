@@ -7,7 +7,8 @@ export const metadata = { title: "New listing" };
 
 export default async function NewListing() {
   const { userId } = await auth.protect();
-  if (!(await getSeller(userId))?.whatsapp_number) redirect("/profile");
+  const seller = await getSeller(userId);
+  if (!seller?.whatsapp_number && !seller?.whatsapp_username) redirect("/profile");
 
   return (
     <div className="mx-auto max-w-md space-y-6">

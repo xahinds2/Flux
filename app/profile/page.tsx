@@ -13,9 +13,9 @@ export default async function ProfilePage() {
     <div className="mx-auto max-w-md space-y-6">
       <div className="space-y-1">
         <h1 className="text-2xl font-bold">Your seller profile</h1>
-        <p className="text-sm text-slate-600">Buyers see your name and contact you on WhatsApp.</p>
+        <p className="text-sm text-slate-600">Buyers see your name and contact you by phone or WhatsApp.</p>
       </div>
-      <ProfileForm initialName={seller?.name ?? clerkName} initialWhatsapp={seller?.whatsapp_number ?? ""} />
+      <ProfileForm initialPhone={seller?.phone_number ?? ""} initialName={seller?.name ?? clerkName} initialWhatsapp={seller?.whatsapp_number ?? ""} initialUsername={seller?.whatsapp_username ?? ""} />
     </div>
   );
 }

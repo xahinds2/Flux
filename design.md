@@ -31,6 +31,7 @@ Multi-vendor listing app. Anyone can sign up as a seller, configure their WhatsA
    - List of all items from all sellers: image left; title, description, condition/age/brand tags, price, WhatsApp icon right
    - Description lines starting with *, -, or • render as bullet lists in cards and item details
    - Click item → detail page with seller name + WhatsApp
+   - Call icon uses the seller’s separate call number; hidden when unset or sold
    - "Message Seller on WhatsApp" button (pre-filled with item details)
    - Share icon on listing cards and detail pages opens the device share sheet, or copies the listing link when unavailable
    - Link to seller's other items
@@ -42,6 +43,8 @@ User (Seller)
 - id (string) [Clerk ID]
 - email (string)
 - name (string)
+- phone_number (string) [optional, separate number for direct calls; never inferred from WhatsApp]
+- whatsapp_username (string) [optional; used for chat links when set]
 - whatsapp_number (string) [digits only, with country code]
 - created_at (timestamp)
 
@@ -106,13 +109,12 @@ Item
 3. Click "Message [Seller Name] on WhatsApp" → opens WhatsApp with pre-filled:
    ```
    Hey, I'm interested in [Item Title]. Is it available at ₹[Price]?
-   https://flux-pune.vercel.app/item/[id]
    ```
 4. Conversation happens on WhatsApp (seller replies directly)
 5. Can click "View more from [Seller]" → see their other items
 
 ## WhatsApp Integration
-- Each seller stores their WhatsApp number in profile
+- Each seller stores their WhatsApp number or username in profile; username takes priority for chat links
 - Shared product links always use https://flux-pune.vercel.app, including from local development.
 - Pre-fill link: `https://wa.me/{seller_whatsapp}?text=...`
 - No backend messaging, direct seller contact only

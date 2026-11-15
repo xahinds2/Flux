@@ -5,9 +5,9 @@ export const formatPrice = (price: number) => (Number.isInteger(price) ? rupees 
 
 export const productLink = (itemId: string) => `https://flux-pune.vercel.app/item/${encodeURIComponent(itemId)}`;
 
-export function whatsappLink(number: string, title: string, price: number, itemId: string) {
-  const text = `Hey, I'm interested in ${title}. Is it available at ${formatPrice(price)}?\n${productLink(itemId)}`;
-  return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+export function whatsappLink(recipient: string, title: string, price: number) {
+  const text = `Hey, I'm interested in ${title}. Is it available at ${formatPrice(price)}?`;
+  return `https://wa.me/${encodeURIComponent(recipient)}?text=${encodeURIComponent(text)}`;
 }
 
 export function formatAge(purchasedAt: string) {

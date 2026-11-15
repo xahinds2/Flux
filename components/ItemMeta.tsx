@@ -2,7 +2,7 @@ import type { Item } from "@/lib/db";
 import { formatAge } from "@/lib/format";
 
 export default function ItemMeta({ item }: { item: Item }) {
-  const tags = [item.condition, item.purchased_at && formatAge(item.purchased_at), item.brand].filter(Boolean);
+  const tags = [item.condition, item.purchased_at && formatAge(item.purchased_at)].filter(Boolean);
   if (tags.length === 0) return null;
 
   return (

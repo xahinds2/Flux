@@ -1,3 +1,4 @@
+import CallButton from "@/components/CallButton";
 import Image from "next/image";
 import Link from "next/link";
 import ShareButton from "@/components/ShareButton";
@@ -27,11 +28,14 @@ export default function ItemCard({ item }: { item: Listing }) {
 
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <div className="flex items-center gap-2">
-          <h3 className={`min-w-0 flex-1 line-clamp-1 font-medium ${item.sold ? "text-slate-500" : ""}`}>
+          <div className="min-w-0 flex-1">
+            {item.brand && <p className="mb-0.5 truncate text-[11px] leading-4 text-slate-500">{item.brand}</p>}
+          <h3 className={`min-w-0 line-clamp-1 font-medium ${item.sold ? "text-slate-500" : ""}`}>
             <Link href={`/item/${item.id}`} className="after:absolute after:inset-0">
               {item.title}
             </Link>
           </h3>
+          </div>
           <div className="relative z-10"><ShareButton itemId={item.id} title={item.title} compact /></div>
         </div>
         {item.description && <ItemDescription text={item.description} compact />}
@@ -41,14 +45,15 @@ export default function ItemCard({ item }: { item: Listing }) {
           <p className={`shrink-0 whitespace-nowrap text-lg font-semibold ${item.sold ? "text-slate-400 line-through" : ""}`}>{formatPrice(item.price)}</p>
           {item.sold ? (
             <span className="text-sm text-slate-500">Unavailable</span>
-          ) : item.seller_whatsapp ? (
-            <div className="relative z-10 min-w-0">
-              <WhatsAppButton
+          ) : (item.seller_whatsapp || item.seller_phone) ? (
+            <div className="relative z-10 flex min-w-0 flex-wrap items-center gap-2">
+              {item.seller_phone && <CallButton number={item.seller_phone} name={item.seller_name} compact />}
+              {item.seller_whatsapp && <WhatsAppButton
                 itemId={item.id}
-                href={whatsappLink(item.seller_whatsapp, item.title, item.price, item.id)}
+                href={whatsappLink(item.seller_whatsapp, item.title, item.price)}
                 label={item.seller_name}
                 compact
-              />
+              />}
             </div>
           ) : (
             <p className="truncate text-xs text-slate-500">{item.seller_name}</p>
