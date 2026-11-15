@@ -50,7 +50,7 @@ export default async function ItemPage({ params }: Props) {
             <ShareButton itemId={item.id} title={item.title} />
           </div>
           <p className="text-2xl font-semibold">{formatPrice(item.price)}</p>
-          <Link href={`/seller/${item.user_id}`} className="text-sm text-slate-600 hover:text-slate-900">
+          <Link href={seller?.handle ? `/${seller.handle}` : `/seller/${item.user_id}`} className="text-sm text-slate-600 hover:text-slate-900">
             Sold by {sellerName}
           </Link>
         </div>
@@ -84,7 +84,7 @@ export default async function ItemPage({ params }: Props) {
           <p className="text-sm text-slate-500">This seller hasn&apos;t set up WhatsApp yet.</p>
         )}
 
-        <Link href={`/seller/${item.user_id}`} className="inline-block text-sm font-medium text-slate-900 underline-offset-4 hover:underline">
+        <Link href={seller?.handle ? `/${seller.handle}` : `/seller/${item.user_id}`} className="inline-block text-sm font-medium text-slate-900 underline-offset-4 hover:underline">
           View more from {sellerName} →
         </Link>
       </div>

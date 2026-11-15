@@ -1,3 +1,5 @@
+import { handleError } from "@/lib/handle";
+
 export const MAX_IMAGES = 5;
 export const CONDITIONS = ["New", "Like new", "Good", "Fair"] as const;
 
@@ -61,9 +63,12 @@ export function parseItemInput(input: unknown, userId: string): Result<ItemInput
   };
 }
 
-export function parseProfileInput(input: unknown): Result<{ name: string; phone_number: string; whatsapp_number: string; whatsapp_username: string }> {
+export function parseProfileInput(input: unknown): Result<{ handle: string; name: string; phone_number: string; whatsapp_number: string; whatsapp_username: string }> {
   const body = obj(input);
   const name = str(body.name);
+  const handle = str(body.handle).toLowerCase();
+  const invalidHandle = handle && handleError(handle);
+  if (invalidHandle) return { ok: false, error: invalidHandle };
   const phoneDigits = str(body.phone_number).replace(/\D/g, "").replace(/^0+/, "");
   const phone_number = phoneDigits.length === 10 ? `91${phoneDigits}` : phoneDigits;
   const whatsapp_username = str(body.whatsapp_username).replace(/^@/, "");
@@ -81,5 +86,5 @@ export function parseProfileInput(input: unknown): Result<{ name: string; phone_
     return { ok: false, error: "Enter your WhatsApp number with country code, e.g. +91 98765 43210" };
   }
 
-  return { ok: true, data: { name, phone_number, whatsapp_number, whatsapp_username } };
+  return { ok: true, data: { handle, name, phone_number, whatsapp_number, whatsapp_username } };
 }

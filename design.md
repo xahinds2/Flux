@@ -41,6 +41,7 @@ Multi-vendor listing app. Anyone can sign up as a seller, configure their WhatsA
 ```
 User (Seller)
 - id (string) [Clerk ID]
+- handle (string) [optional, unique lowercase personal listing address, 3–30 characters; reserved app routes excluded]
 - email (string)
 - name (string)
 - phone_number (string) [optional, separate number for direct calls; never inferred from WhatsApp]
@@ -69,6 +70,7 @@ Item
 ### Public
 - `GET /` — browse all items (list, all sellers)
 - `GET /item/[id]` — item detail + seller contact
+- `GET /[handle]` — personal seller listing page
 - `GET /seller/[user_id]` — all items from one seller
 - `GET /api/items` — fetch all items
 - `GET /api/items?seller_id=...` — filter by seller
@@ -84,6 +86,7 @@ Item
 - `PATCH /api/items/[id]` — enable or disable your item with `{ active: boolean }`, or mark it sold with `{ sold: true }`
 - `POST /api/upload` — upload item photo to Vercel Blob (JPEG/PNG/WebP/GIF, max 4MB)
 - `DELETE /api/items/[id]` — delete your item
+- `GET /api/profile/handle?handle=...` — authenticated availability check; saving enforces uniqueness atomically
 - `PUT /api/profile` — update WhatsApp, name
 
 ## User Flows

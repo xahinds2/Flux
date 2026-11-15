@@ -4,6 +4,7 @@ import type { ItemInput } from "@/lib/validate";
 
 type UserDoc = {
   _id: string;
+  handle?: string;
   email?: string;
   name: string;
   phone_number: string;
@@ -28,7 +29,7 @@ type ItemDoc = {
   created_at: Date;
 };
 
-export type Seller = { id: string; name: string; phone_number: string; whatsapp_number: string; whatsapp_username: string };
+export type Seller = { handle: string; id: string; name: string; phone_number: string; whatsapp_number: string; whatsapp_username: string };
 
 export type Item = {
   id: string;
@@ -51,6 +52,7 @@ export type Listing = Item & { seller_name: string; seller_phone: string; seller
 const userSchema = new Schema<UserDoc>({
   _id: { type: String, required: true },
   email: String,
+  handle: { type: String, unique: true, sparse: true },
   name: { type: String, default: "" },
   phone_number: { type: String, default: "" },
   whatsapp_number: { type: String, default: "" },
@@ -108,7 +110,7 @@ function toItem(doc: ItemDoc): Item {
 }
 
 function toSeller(doc: UserDoc): Seller {
-  return { id: doc._id, name: doc.name || "Seller", phone_number: (doc.phone_number ?? "").replace(/\D/g, ""), whatsapp_username: doc.whatsapp_username ?? "", whatsapp_number: (doc.whatsapp_number ?? "").replace(/\D/g, "") };
+  return { handle: doc.handle ?? "", id: doc._id, name: doc.name || "Seller", phone_number: (doc.phone_number ?? "").replace(/\D/g, ""), whatsapp_username: doc.whatsapp_username ?? "", whatsapp_number: (doc.whatsapp_number ?? "").replace(/\D/g, "") };
 }
 
 export async function getListings(sellerId?: string, includeInactive = false): Promise<Listing[]> {
@@ -140,9 +142,12 @@ export async function getSeller(userId: string): Promise<Seller | null> {
   return doc ? toSeller(doc) : null;
 }
 
-export async function upsertSeller(userId: string, data: { name: string; phone_number: string; whatsapp_number: string; whatsapp_username: string; email?: string }) {
+export async function upsertSeller(userId: string, data: { handle: string; name: string; phone_number: string; whatsapp_number: string; whatsapp_username: string; email?: string }) {
   await connectDB();
-  const doc = await User.findByIdAndUpdate(userId, { $set: data }, { upsert: true, new: true }).lean<UserDoc>();
+  await User.init();
+  const { handle, ...profile } = data;
+  const update = handle ? { $set: { ...profile, handle } } : { $set: profile, $unset: { handle: 1 } };
+  const doc = await User.findByIdAndUpdate(userId, update, { upsert: true, new: true }).lean<UserDoc>();
   return toSeller(doc!);
 }
 
@@ -182,4 +187,15 @@ export async function incrementClick(id: string) {
   await connectDB();
   const res = await ItemModel.updateOne({ _id: id }, { $inc: { whatsapp_clicks: 1 } });
   return res.matchedCount > 0;
+}
+
+export async function getSellerByHandle(handle: string): Promise<Seller | null> {
+  await connectDB();
+  const doc = await User.findOne({ handle }).lean<UserDoc>();
+  return doc ? toSeller(doc) : null;
+}
+
+export async function isHandleAvailable(handle: string, userId: string) {
+  await connectDB();
+  return !(await User.exists({ handle, _id: { $ne: userId } }));
 }

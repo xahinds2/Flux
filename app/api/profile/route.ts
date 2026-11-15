@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { upsertSeller } from "@/lib/db";
+import { isHandleAvailable, upsertSeller } from "@/lib/db";
 import { parseProfileInput } from "@/lib/validate";
 
 export async function PUT(req: NextRequest) {
@@ -12,5 +12,15 @@ export async function PUT(req: NextRequest) {
   const { data } = parsed;
 
   const email = (await currentUser())?.primaryEmailAddress?.emailAddress;
-  return NextResponse.json(await upsertSeller(userId, { ...data, email }));
+  if (data.handle && !(await isHandleAvailable(data.handle, userId))) {
+    return NextResponse.json({ error: "This address is already taken." }, { status: 409 });
+  }
+  try {
+    return NextResponse.json(await upsertSeller(userId, { ...data, email }));
+  } catch (error) {
+    if (error && typeof error === "object" && "code" in error && error.code === 11000 && "keyPattern" in error && (error.keyPattern as Record<string, unknown>)?.handle) {
+      return NextResponse.json({ error: "This address is already taken." }, { status: 409 });
+    }
+    throw error;
+  }
 }
