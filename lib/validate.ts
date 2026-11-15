@@ -76,6 +76,7 @@ export function parseProfileInput(input: unknown): Result<{ handle: string; name
   const whatsapp_number = digits.length === 10 ? `91${digits}` : digits;
 
   if (!name || name.length > 60) return { ok: false, error: "Name is required (max 60 characters)" };
+  if (whatsapp_username && whatsapp_number) return { ok: false, error: "Choose a WhatsApp username or phone number, not both" };
   if (whatsapp_username && !/^(?=.*[a-zA-Z])[a-zA-Z0-9._]{3,35}$/.test(whatsapp_username)) {
     return { ok: false, error: "Enter a valid WhatsApp username (3–35 letters, numbers, periods or underscores)" };
   }

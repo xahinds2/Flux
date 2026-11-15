@@ -117,7 +117,7 @@ Item
 5. Can click "View more from [Seller]" → see their other items
 
 ## WhatsApp Integration
-- Each seller stores their WhatsApp number or username in profile; username takes priority for chat links
+- Each seller chooses WhatsApp username or phone number in profile; only the selected contact is saved, and switching clears the other value
 - Shared product links always use https://flux-pune.vercel.app, including from local development.
 - Pre-fill link: `https://wa.me/{seller_whatsapp}?text=...`
 - No backend messaging, direct seller contact only
